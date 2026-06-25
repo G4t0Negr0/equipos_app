@@ -4,9 +4,18 @@ import '../models/equipo.dart';
 
 class EquipoService {
   static const String baseUrl = 'https://equipos-lamyg.onrender.com';
+  static const String apiKey = 'lamyg-2026-equipos-secretkey-x9k2m';
+
+  Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'X-API-Key': apiKey,
+  };
 
   Future<List<Equipo>> obtenerEquipos() async {
-    final response = await http.get(Uri.parse('$baseUrl/equipos'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/equipos'),
+      headers: _headers,
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -17,7 +26,10 @@ class EquipoService {
   }
 
   Future<List<Equipo>> obtenerAlertas() async {
-    final response = await http.get(Uri.parse('$baseUrl/equipos/alertas'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/equipos/alertas'),
+      headers: _headers,
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -30,7 +42,7 @@ class EquipoService {
   Future<bool> crearEquipo(Map<String, dynamic> datos) async {
     final response = await http.post(
       Uri.parse('$baseUrl/equipos'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(datos),
     );
 
@@ -40,24 +52,27 @@ class EquipoService {
   Future<bool> registrarCalibracion(String codigo, Map<String, dynamic> datos) async {
     final response = await http.put(
       Uri.parse('$baseUrl/equipos/$codigo/calibracion'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(datos),
     );
 
     return response.statusCode == 200;
   }
-  Future<bool> eliminarEquipo(String codigo) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/equipos/$codigo'),
-    );
 
-    return response.statusCode == 200;
-  }
   Future<bool> actualizarEquipo(String codigo, Map<String, dynamic> datos) async {
     final response = await http.put(
       Uri.parse('$baseUrl/equipos/$codigo'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(datos),
+    );
+
+    return response.statusCode == 200;
+  }
+
+  Future<bool> eliminarEquipo(String codigo) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/equipos/$codigo'),
+      headers: _headers,
     );
 
     return response.statusCode == 200;
